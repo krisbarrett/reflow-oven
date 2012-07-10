@@ -23,7 +23,7 @@ class ProfileWidget():
 			                        self.to_pixely(self.ymin), 
 			                        self.to_pixelx(x), 
 			                        self.to_pixely(self.ymax),
-			                        fill="gray", width=1)
+			                        fill="gray", width=1, dash=(2,2))
 			
 	def draw_gridy(self):
 		for y in range(int(self.ymin), int(self.ymax), 10):
@@ -31,7 +31,7 @@ class ProfileWidget():
 			                        self.to_pixely(y), 
 			                        self.to_pixelx(self.xmax), 
 			                        self.to_pixely(y),
-			                        fill="gray", width=1)
+			                        fill="gray", width=1, dash=(2,2))
 	
 	def redraw(self):
 		self.canvas.delete("all")

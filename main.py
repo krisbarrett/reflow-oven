@@ -1,8 +1,22 @@
+#TODO: Implement serial port selector
+#TODO: Integrate temperature controller
+
 from Tkinter import *
 from threading import *
 from random import *
 from profile_widget import ProfileWidget
 from reflow import Reflow
+from temperature_controller import TemperatureController
+import os
+import re
+
+files = os.listdir("/dev")
+serial_ports = []
+for f in files:
+	match = re.search("tty[\.SU]", f)
+	if match != None:
+		serial_ports.append(f)
+	
 
 def update():
 	global i, update_timer
@@ -18,24 +32,25 @@ def start_button_clicked():
 	print "button clicked"
 	print serial_var.get()
 	desired = Reflow.reflow(starting_temp=25, 
-	                        preheat_min=float(preheat_min_var.get()), 
-	                        preheat_max=float(preheat_max_var.get()), 
-	                        peak_temp=float(peak_temp_var.get()), 
-	                        flow_temp=float(flow_temp_var.get()), 
-	                        ramp_up=float(ramp_up_var.get()), 
-	                        ramp_down=float(ramp_down_var.get()), 
-	                        preheat_time=float(preheat_time_var.get()), 
-	                        peak_time=float(peak_time_var.get()), 
-	                        flow_time=float(flow_time_var.get()))
+		preheat_min=float(preheat_min_var.get()), 
+		preheat_max=float(preheat_max_var.get()), 
+		peak_temp=float(peak_temp_var.get()), 
+		flow_temp=float(flow_temp_var.get()), 
+		ramp_up=float(ramp_up_var.get()), 
+		ramp_down=float(ramp_down_var.get()), 
+		preheat_time=float(preheat_time_var.get()), 
+		peak_time=float(peak_time_var.get()), 
+		flow_time=float(flow_time_var.get()))
 	profile.desired = desired
 	profile.redraw()
 	if update_timer != None:
 		update_timer.cancel()
 	i = 0
 	update()
-	
 
+# root
 root = Tk()
+root.wm_title("Reflow Controller")
 
 # profile widget
 width = 640
@@ -51,7 +66,8 @@ frame.grid(row=0, column=1)
 # serial_listbox
 serial_label = Label(frame, text="Serial Port: ")
 serial_var = StringVar(root)
-serial_option = OptionMenu(frame, serial_var, "one", "two")
+serial_var.set(serial_ports[0])
+serial_option = apply(OptionMenu, (frame, serial_var) + tuple(serial_ports))
 serial_label.grid(row=1, column=0)
 serial_option.grid(row=1, column=1)
 
@@ -135,4 +151,5 @@ start_button.grid(row=11, column=1)
 # update_timer
 update_timer = None
 
+# run
 root.mainloop()
