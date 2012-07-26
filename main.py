@@ -35,7 +35,7 @@ def update():
 	
 def start_button_clicked():
 	global i, update_timer, temp_controller
-	print "button clicked"
+	print "start clicked"
 	temp_controller = TemperatureController("/dev/" + serial_var.get())
 	# wait for arduino to reboot
 	time.sleep(3)
@@ -55,6 +55,21 @@ def start_button_clicked():
 		update_timer.cancel()
 	i = 0
 	update()
+	
+def preview_button_clicked():
+	print "preview clicked"
+	desired = Reflow.reflow(25,  
+		preheat_min=float(preheat_min_var.get()), 
+		preheat_max=float(preheat_max_var.get()), 
+		peak_temp=float(peak_temp_var.get()), 
+		flow_temp=float(flow_temp_var.get()), 
+		ramp_up=float(ramp_up_var.get()), 
+		ramp_down=float(ramp_down_var.get()), 
+		preheat_time=float(preheat_time_var.get()), 
+		peak_time=float(peak_time_var.get()), 
+		flow_time=float(flow_time_var.get()))
+	profile.desired = desired
+	profile.redraw()
 
 # root
 root = Tk()
@@ -152,9 +167,13 @@ peak_time_entry.insert(0,10)
 peak_time_label.grid(row=10, column=0)
 peak_time_entry.grid(row=10, column=1)
 
+# preview button
+preview_button = Button(frame, text="Preview", command=preview_button_clicked)
+preview_button.grid(row=11, column=1)
+
 # start button
 start_button = Button(frame, text="Start", command=start_button_clicked)
-start_button.grid(row=11, column=1)
+start_button.grid(row=12, column=1)
 
 # update_timer
 update_timer = None
