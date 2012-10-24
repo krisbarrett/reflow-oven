@@ -2,6 +2,7 @@
 
 // pins
 int zeroCross = 2;
+int cooler = 3;
 int led = 4;
 int relayLed = 5;
 int thermoGND = 8;
@@ -9,14 +10,14 @@ int thermoVCC = 9;
 int thermoDO = 10;
 int thermoCS = 11;
 int thermoCLK = 12;
-int relay = 13;
+int heater = 13;
 
 // state information
 boolean running = true;
 int wasHigh = 1;
 double lastTemp = 0;
 int lastTempMs = 0;
-int relayState = LOW;
+int heaterState = LOW;
 int ledState = LOW;
 
 // command buffer
@@ -109,15 +110,17 @@ float stof(String s) {
 }
 
 void nextState() {
-  digitalWrite(relay, relayState);
-  digitalWrite(relayLed, relayState);
+  digitalWrite(heater, heaterState);
+  digitalWrite(cooler, coolerState);
+  digitalWrite(relayLed, heaterState);
   double currentTemp = cmdTemp();
-  if(relayState == HIGH) {
-    relayState = (currentTemp >= temp) ? LOW : HIGH;
+  if(heaterState == HIGH) {
+    heaterState = (currentTemp >= temp) ? LOW : HIGH;
   }
-  else if(relayState == LOW){
-    relayState = (currentTemp <= temp) ? HIGH : LOW;
+  else if(heaterState == LOW){
+    heaterState = (currentTemp <= temp) ? HIGH : LOW;
   }
+  coolerState = (heaterState == LOW) ? HIGH : LOW;
 }
 
 void setup() {
@@ -125,7 +128,7 @@ void setup() {
   pinMode(thermoVCC, OUTPUT); digitalWrite(thermoVCC, HIGH);
   pinMode(thermoGND, OUTPUT); digitalWrite(thermoGND, LOW);
   pinMode(led, OUTPUT); digitalWrite(led, LOW);
-  pinMode(relay, OUTPUT); digitalWrite(relay, LOW);
+  pinMode(heater, OUTPUT); digitalWrite(heater, LOW);
   pinMode(relayLed, OUTPUT); digitalWrite(relayLed, LOW);
   pinMode(zeroCross, INPUT);
   
@@ -154,7 +157,7 @@ void loop() {
          nextState();
        }
        else {
-         digitalWrite(relay, LOW);
+         digitalWrite(heater, LOW);
          digitalWrite(relayLed, LOW);
        }
        wasHigh = 0;
