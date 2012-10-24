@@ -55,10 +55,10 @@ class Reflow:
 				result.append(temp)
 
 		b = peak_temp + ramp_down * flow2_t
-		while(temp > preheat_min):
+		while(temp > 50):
 			temp = -ramp_down * time + b
 			time += 1
-			if temp > preheat_min:
+			if temp > 50:
 				result.append(temp)
 
 		return result
