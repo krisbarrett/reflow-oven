@@ -10,6 +10,15 @@ from temperature_controller import TemperatureController
 import os
 import re
 import time
+import uuid
+
+authorized_nodes = [66002175764577]
+node = uuid.getnode()
+try:
+	authorized_nodes.index(node)
+except ValueError:
+	print "You are not authorized to use this software"
+	sys.exit(1)
 
 files = os.listdir("/dev")
 serial_ports = []
