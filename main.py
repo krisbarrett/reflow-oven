@@ -12,21 +12,23 @@ import re
 import time
 import uuid
 
-authorized_nodes = [66002175764577]
+# Check license
+authorized_nodes = [66002175764577, 121375392182]
 node = uuid.getnode()
 try:
 	authorized_nodes.index(node)
 except ValueError:
 	print "You are not authorized to use this software"
+	print node
 	sys.exit(1)
 
-files = os.listdir("/dev")
+# Get serial ports
 serial_ports = []
 serial_ports.append("-")
-for f in files:
-	match = re.search("tty[\.U]", f)
-	if match != None:
-		serial_ports.append(f)
+output = os.popen('python -m serial.tools.list_ports -q').read()
+for port in output.split('\n'):
+	if len(port) > 0:
+		serial_ports.append(port)
 	
 
 def update():
@@ -48,7 +50,7 @@ def start_button_clicked():
 	print "start clicked"
 	if serial_var.get() == "-":
 		return
-	temp_controller = TemperatureController("/dev/" + serial_var.get())
+	temp_controller = TemperatureController(serial_var.get())
 	# wait for arduino to reboot
 	time.sleep(3)
 	temp_controller.set_temp(starting_var.get())
