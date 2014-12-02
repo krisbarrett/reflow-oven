@@ -24,12 +24,13 @@ except ValueError:
 
 # Get serial ports
 serial_ports = []
-serial_ports.append("-")
-output = os.popen('python -m serial.tools.list_ports -q').read()
-for port in output.split('\n'):
-	if len(port) > 0:
-		serial_ports.append(port)
-	
+if sys.platform == 'darwin':
+	files = os.listdir("/dev")
+	serial_ports.append("-")
+	for f in files:
+		match = re.search("tty[\.U]", f)
+		if match != None:
+			serial_ports.append("/dev/" + f)
 
 def update():
 	global i, update_timer, temp_controller
@@ -105,11 +106,19 @@ frame.grid(row=0, column=1)
 
 # serial_listbox
 serial_label = Label(frame, text="Serial Port: ")
-serial_var = StringVar(root)
-serial_var.set(serial_ports[0])
-serial_option = apply(OptionMenu, (frame, serial_var) + tuple(serial_ports))
-serial_label.grid(row=1, column=0)
-serial_option.grid(row=1, column=1)
+if sys.platform == 'darwin':
+	serial_var = StringVar(root)
+	serial_var.set(serial_ports[0])
+	serial_option = apply(OptionMenu, (frame, serial_var) + tuple(serial_ports))
+	serial_label.grid(row=1, column=0)
+	serial_option.grid(row=1, column=1)
+elif sys.platform == 'win32':
+	serial_var = StringVar(root)
+	serial_entry = Entry(frame, textvariable=serial_var)
+	serial_entry.insert(0,"COM1")
+	serial_label.grid(row=1, column=0)
+	serial_entry.grid(row=1, column=1)
+
 
 # ramp up
 degrees_c = unichr(176) + "C"
