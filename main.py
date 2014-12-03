@@ -90,7 +90,6 @@ def update():
 	
 def start_button_clicked():
 	global i, update_timer, temp_controller
-	print "start clicked"
 	if serial_var.get() == "-":
 		return
 	temp_controller = TemperatureController(serial_var.get())
@@ -117,7 +116,6 @@ def start_button_clicked():
 	update()
 	
 def preview_button_clicked():
-	print "preview clicked"
 	desired = Reflow.reflow(50,  
 		preheat_min=float(preheat_min_var.get()), 
 		preheat_max=float(preheat_max_var.get()), 
