@@ -11,15 +11,24 @@ import os
 import re
 import time
 import uuid
+import json
 
-# Check license
-authorized_nodes = [66002175764577, 121375392182]
+# License
+license = '{"expiration":1449031259,"id":"08f9e385-2ae3-4678-a12d-9f91de9e95c0","name":"Kris Barrett","nodes":[66002175764577,121375392182],"product":"Reflow Oven Controller"}'
+license = json.loads(license)
+
+# Check node
 node = uuid.getnode()
 try:
-	authorized_nodes.index(node)
-except ValueError:
-	print "You are not authorized to use this software"
-	print node
+	license['nodes'].index(node)
+except:
+	print('You are not authorized to use this software', node)
+	sys.exit(1)
+
+# Check expiration
+current_time = int(time.time())
+if current_time > license['expiration']:
+	print('License is expired')
 	sys.exit(1)
 
 # Get serial ports
