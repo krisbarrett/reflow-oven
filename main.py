@@ -7,22 +7,55 @@ from random import *
 from profile_widget import ProfileWidget
 from reflow import Reflow
 from temperature_controller import TemperatureController
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA
+from Crypto.PublicKey import RSA
 import os
 import re
 import time
 import uuid
 import json
 
-# License
+#--------------------------------------------------------------------------------
+# !!! SIG AND LICENSE GO HERE !!!
+#--------------------------------------------------------------------------------
+signature = [127, 194, 96, 226, 7, 22, 71, 171, 55, 160, 173, 212, 113, 93, 57, 152, 88, 119, 133, 90, 84, 181, 223, 133, 86, 170, 127, 138, 160, 93, 101, 25, 243, 16, 174, 123, 231, 103, 137, 34, 115, 165, 55, 38, 236, 188, 180, 60, 151, 54, 119, 209, 40, 171, 2, 43, 147, 120, 61, 237, 237, 159, 105, 9, 167, 47, 200, 161, 61, 105, 108, 138, 215, 212, 244, 88, 40, 135, 40, 126, 9, 196, 173, 34, 25, 224, 194, 239, 100, 168, 184, 210, 247, 43, 32, 140, 181, 145, 157, 68, 248, 90, 129, 99, 81, 206, 5, 212, 193, 45, 110, 208, 79, 242, 193, 155, 133, 61, 226, 93, 76, 187, 22, 133, 236, 131, 45, 164, 217, 85, 176, 168, 230, 25, 251, 221, 3, 219, 195, 110, 61, 192, 93, 234, 34, 32, 203, 199, 7, 221, 182, 21, 156, 18, 103, 72, 186, 196, 84, 35, 149, 80, 16, 191, 47, 54, 224, 100, 231, 46, 89, 0, 179, 168, 25, 66, 142, 41, 196, 234, 198, 248, 250, 17, 70, 244, 234, 239, 64, 57, 115, 234, 83, 101, 125, 103, 167, 91, 104, 194, 17, 203, 181, 11, 191, 202, 234, 56, 51, 51, 198, 55, 168, 162, 110, 89, 175, 140, 125, 205, 177, 149, 20, 253, 124, 210, 128, 77, 239, 157, 214, 16, 143, 241, 76, 253, 209, 43, 127, 164, 68, 208, 141, 29, 172, 213, 93, 205, 224, 228, 240, 187, 220, 106, 115, 251, ]
 license = '{"expiration":1449031259,"id":"08f9e385-2ae3-4678-a12d-9f91de9e95c0","name":"Kris Barrett","nodes":[66002175764577,121375392182],"product":"Reflow Oven Controller"}'
-license = json.loads(license)
+#--------------------------------------------------------------------------------
+
+# Key
+pubkey = "-----BEGIN PUBLIC KEY-----\n\
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwmD1/b94/nJqc8J03pWh\n\
+UrAUlAJtPyCvEyQEtrIJPmXRB0Uhhm29rVgkzD4zCdWl/HU9dPO0e7YKLz2VrTeR\n\
+Uy1TvvyMRsAaQWbFlNhxYO1aEGKOumM1S3yB+AxzhSugTy791YJ+drhSTDCkYHg8\n\
+CyU/4Tm2YBBVF7nReBqpEnu6/TFIpMDX0dv0xEtr5TyYYhYOfMksYyQ11Wy2hFlz\n\
+34BlhEFPIW7LxOgoUEqeRtG9Ci9gWiy09EuR4bumE7UTCXu2zUJchtazkt+cEO0o\n\
+a3SWzTgpv4gBYyR26rqg8EtSr0GQTKV6sOLGMUgsmsBEOo1Dr4qK3w0UXW7dPBiC\n\
+9wIDAQAB\n\
+-----END PUBLIC KEY-----"
+
+# Signature
+sig = ""
+for i in signature:
+	sig += chr(i)
+
+# Verify License
+key = RSA.importKey(pubkey)
+h = SHA.new(license)
+verifier = PKCS1_v1_5.new(key)
+if not verifier.verify(h, sig):
+	print "Invalid license"
+	sys.exit(1)
 
 # Check node
+license = json.loads(license)
 node = uuid.getnode()
 try:
 	license['nodes'].index(node)
 except:
-	print('You are not authorized to use this software', node)
+	print('You are not authorized to use this software on this machine')
+	print('Licensed for ' + license['name'])
+	print(node)
 	sys.exit(1)
 
 # Check expiration

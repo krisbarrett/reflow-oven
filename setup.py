@@ -38,6 +38,6 @@ else:
     scripts=[mainscript],
   )
 setup(
-  name="MyApplication",
+  name="Reflow Controller",
   **extra_options
 )
