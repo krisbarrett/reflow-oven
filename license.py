@@ -44,11 +44,15 @@ for c in license_details:
 
 encrypted_payload = iv + cipher.encrypt(payload)
 
-sys.stdout.write('encrypted_payload = [')
+f = open('license', 'w')
 for c in encrypted_payload:
-	sys.stdout.write(str(ord(c)))
-	sys.stdout.write(', ')
-print(']')
+	f.write(c)
+
+# sys.stdout.write('encrypted_payload = [')
+# for c in encrypted_payload:
+# 	sys.stdout.write(str(ord(c)))
+# 	sys.stdout.write(', ')
+# print(']')
 
 cipher = AES.new(encryption_key, AES.MODE_CFB, iv)
 encrypted_public_key = iv + cipher.encrypt(public_key)
