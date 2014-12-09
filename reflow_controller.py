@@ -22,6 +22,11 @@ from datetime import datetime
 
 class ReflowController:
 	def __init__(self):
+		check1 = ''
+		check2 = ''
+		check3 = ''
+		check4 = ''
+
 		#--------------------------------------------------------------------------------
 		# encrypted_payload and encrypted_public_key
 		#--------------------------------------------------------------------------------
@@ -78,6 +83,8 @@ class ReflowController:
 		verifier = PKCS1_v1_5.new(key)
 		if not verifier.verify(h, signature):
 			sys.exit(1)
+		else:
+			check1 = '0876677837'
 		license = json.loads(license)
 
 		# Check for revocation
@@ -88,6 +95,8 @@ class ReflowController:
 		conn.close()
 		if r1.status != 200:
 			sys.exit(2)
+		else:
+			check2 = '2668052645'
 
 		# Check expiration
 		current_time = datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %Z')
@@ -97,16 +106,25 @@ class ReflowController:
 			conn.request("GET", license['path'] + '/expired?' + request)
 			r1 = conn.getresponse()
 			sys.exit(3)
+		else:
+			check3 = '4818532868'
 
 		# Check node
 		node = uuid.getnode()
 		try:
 			license['nodes'].index(node)
+			check4 = '5794981726'
 		except:
 			request = urllib.urlencode({'name': license['name'], 'node': node})
 			conn.request("GET", license['path'] + '/unauthorized?' + request)
 			r1 = conn.getresponse()
+			print(node)
 			sys.exit(4)
+
+		assert check1 == '0876677837'
+		assert check2 == '2668052645'
+		assert check3 == '4818532868'
+		assert check4 == '5794981726'
 
 		# Get serial ports
 		serial_ports = []
