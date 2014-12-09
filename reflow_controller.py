@@ -17,6 +17,7 @@ import time
 import uuid
 import json
 import httplib
+import urllib
 from datetime import datetime
 
 class ReflowController:
@@ -92,6 +93,9 @@ class ReflowController:
 		current_time = datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %Z')
 		current_time = time.mktime(current_time.timetuple())
 		if current_time > license['expiration']:
+			request = urllib.urlencode({'name': license['name'], 'id': license['id']})
+			conn.request("GET", license['path'] + '/expired?' + request)
+			r1 = conn.getresponse()
 			sys.exit(3)
 
 		# Check node
@@ -99,6 +103,9 @@ class ReflowController:
 		try:
 			license['nodes'].index(node)
 		except:
+			request = urllib.urlencode({'name': license['name'], 'node': node})
+			conn.request("GET", license['path'] + '/unauthorized?' + request)
+			r1 = conn.getresponse()
 			sys.exit(4)
 
 		# Get serial ports
