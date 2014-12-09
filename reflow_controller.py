@@ -16,6 +16,7 @@ import re
 import time
 import uuid
 import json
+import httplib
 
 class ReflowController:
 	def __init__(self):
@@ -86,6 +87,14 @@ class ReflowController:
 			print('You are not authorized to use this software on this machine')
 			print('Licensed for ' + license['name'])
 			print(node)
+			sys.exit(1)
+
+		# Check for revocation
+		conn = httplib.HTTPSConnection(license['host'])
+		conn.request("GET", license['path'] + license['id'])
+		r1 = conn.getresponse()
+		conn.close()
+		if r1.status != 200:
 			sys.exit(1)
 
 		# Check expiration

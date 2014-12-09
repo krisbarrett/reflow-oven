@@ -6,7 +6,7 @@ from Crypto.Cipher import AES
 from Crypto import Random
 
 # License
-license_details = '{"expiration":1449031259,"id":"08f9e385-2ae3-4678-a12d-9f91de9e95c0","name":"Kris Barrett","nodes":[66002175764577,121375392182],"product":"Reflow Oven Controller"}'
+license_details = '{"expiration":1449031259,"id":"08f9e385-2ae3-4678-a12d-9f91de9e95c0","host":"s3.amazonaws.com","path":"/reflow-licenses/","name":"Kris Barrett","nodes":[66002175764577,121375392182],"product":"Reflow Oven Controller"}'
 
 # Encryption key
 encryption_key = b''
