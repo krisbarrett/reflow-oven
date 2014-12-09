@@ -17,6 +17,7 @@ import time
 import uuid
 import json
 import httplib
+from datetime import datetime
 
 class ReflowController:
 	def __init__(self):
@@ -75,33 +76,30 @@ class ReflowController:
 		h = SHA.new(license)
 		verifier = PKCS1_v1_5.new(key)
 		if not verifier.verify(h, signature):
-			print "Invalid license"
 			sys.exit(1)
-
-		# Check node
 		license = json.loads(license)
-		node = uuid.getnode()
-		try:
-			license['nodes'].index(node)
-		except:
-			print('You are not authorized to use this software on this machine')
-			print('Licensed for ' + license['name'])
-			print(node)
-			sys.exit(1)
 
 		# Check for revocation
 		conn = httplib.HTTPSConnection(license['host'])
 		conn.request("GET", license['path'] + license['id'])
 		r1 = conn.getresponse()
+		date = r1.getheader('date')
 		conn.close()
 		if r1.status != 200:
-			sys.exit(1)
+			sys.exit(2)
 
 		# Check expiration
-		current_time = int(time.time())
+		current_time = datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %Z')
+		current_time = time.mktime(current_time.timetuple())
 		if current_time > license['expiration']:
-			print('License is expired')
-			sys.exit(1)
+			sys.exit(3)
+
+		# Check node
+		node = uuid.getnode()
+		try:
+			license['nodes'].index(node)
+		except:
+			sys.exit(4)
 
 		# Get serial ports
 		serial_ports = []

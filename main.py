@@ -1,4 +1,8 @@
 from reflow_controller import ReflowController
+import sys
 
-reflow_controller = ReflowController()
+try:
+	reflow_controller = ReflowController()
+except:
+	sys.exit(5)
 
