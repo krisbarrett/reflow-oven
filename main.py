@@ -4,4 +4,4 @@ import sys
 try:
 	reflow_controller = ReflowController()
 except:
-	sys.exit(5)
+	sys.exit(6)

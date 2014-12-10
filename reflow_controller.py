@@ -19,20 +19,27 @@ import json
 import httplib
 import urllib
 from datetime import datetime
+import easygui
 
 class ReflowController:
 	def __init__(self):
-		check1 = ''
-		check2 = ''
-		check3 = ''
-		check4 = ''
+		check1 = False
+		check2 = False
+		check3 = False
+		check4 = False
+		node = uuid.getnode()
 
 		#--------------------------------------------------------------------------------
 		# encrypted_payload and encrypted_public_key
 		#--------------------------------------------------------------------------------
 		encryption_key = [127, 194, 34, 166, 139, 10, 252, 13, 12, 33, 62, 156, 32, 156, 23, 161]
 		encrypted_public_key = [82, 188, 242, 235, 51, 22, 165, 172, 8, 168, 51, 229, 227, 200, 40, 36, 122, 227, 206, 253, 210, 95, 103, 215, 204, 226, 127, 229, 143, 46, 88, 52, 36, 16, 198, 154, 7, 202, 69, 142, 189, 22, 76, 186, 14, 113, 231, 184, 236, 88, 49, 242, 120, 28, 152, 172, 173, 101, 8, 83, 92, 203, 248, 48, 66, 255, 131, 110, 216, 186, 114, 148, 117, 134, 86, 199, 127, 152, 28, 36, 106, 226, 251, 149, 104, 211, 14, 27, 214, 128, 128, 166, 117, 205, 71, 148, 66, 234, 231, 236, 10, 146, 156, 37, 129, 32, 67, 178, 154, 186, 52, 160, 192, 42, 64, 171, 129, 105, 105, 83, 250, 125, 51, 189, 179, 169, 106, 99, 127, 210, 241, 31, 78, 155, 26, 209, 130, 209, 225, 82, 69, 209, 161, 244, 76, 251, 49, 62, 74, 109, 232, 163, 51, 44, 85, 33, 95, 173, 65, 158, 7, 163, 196, 29, 162, 4, 58, 45, 22, 227, 7, 219, 13, 222, 18, 136, 241, 9, 136, 15, 123, 182, 74, 77, 27, 22, 179, 220, 237, 196, 144, 101, 77, 115, 141, 5, 48, 147, 135, 200, 69, 230, 3, 109, 20, 51, 62, 86, 146, 237, 205, 141, 168, 32, 73, 254, 233, 42, 83, 202, 164, 117, 202, 96, 253, 221, 232, 111, 175, 197, 38, 196, 204, 14, 212, 248, 64, 175, 208, 211, 67, 252, 233, 163, 191, 117, 64, 185, 30, 171, 70, 168, 177, 111, 248, 183, 249, 200, 17, 0, 171, 92, 122, 231, 18, 144, 255, 24, 231, 147, 222, 202, 16, 47, 137, 71, 207, 169, 58, 253, 25, 97, 140, 60, 220, 58, 44, 211, 135, 79, 28, 140, 172, 179, 149, 197, 186, 71, 104, 91, 0, 247, 41, 104, 140, 155, 217, 178, 53, 140, 131, 101, 237, 57, 192, 61, 65, 120, 32, 2, 82, 247, 43, 7, 108, 118, 206, 246, 63, 75, 42, 73, 244, 72, 109, 158, 1, 229, 138, 169, 144, 236, 253, 197, 179, 114, 254, 203, 64, 123, 231, 204, 6, 144, 216, 45, 0, 137, 128, 7, 164, 204, 171, 227, 85, 160, 152, 3, 66, 91, 36, 164, 157, 56, 147, 58, 177, 84, 146, 207, 120, 134, 141, 53, 162, 234, 236, 98, 51, 105, 1, 234, 99, 79, 98, 137, 207, 154, 7, 210, 67, 138, 20, 238, 204, 63, 67, 249, 131, 216, 26, 85, 201, 26, 147, 162, 12, 229, 100, 243, 103, 139, 190, 198, 180, 120, 68, 146, 238, 240, 176, 128, 245, 198, 151, 148, 53, 87, 130, 66, 18, 88, 248, 193, 135, 237, 77, 19, 21, 229, 249, 50, 58, 246, 216, 9, 122, 39, 248, 17, 95, 198, 201, 169, 143, 79, 137, ]#--------------------------------------------------------------------------------
-		encrypted_payload = open('./license').read()
+		
+		try:
+			encrypted_payload = open('./license').read()
+		except:
+			easygui.msgbox('E-mail kris.barrett@crispytronics.com with the following number to obtain a license:\n' + str(node), 'No license found')
+			sys.exit()
 
 		# Key
 		encryption_key = [127, 194, 34, 166, 139, 10, 252, 13, 12, 33, 62, 156, 32, 156, 23, 161]
@@ -84,7 +91,7 @@ class ReflowController:
 		if not verifier.verify(h, signature):
 			sys.exit(1)
 		else:
-			check1 = '0876677837'
+			check1 = SHA.new('0876677837')
 		license = json.loads(license)
 
 		# Check for revocation
@@ -96,7 +103,7 @@ class ReflowController:
 		if r1.status != 200:
 			sys.exit(2)
 		else:
-			check2 = '2668052645'
+			check2 = SHA.new('2668052645')
 
 		# Check expiration
 		current_time = datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %Z')
@@ -107,24 +114,35 @@ class ReflowController:
 			r1 = conn.getresponse()
 			sys.exit(3)
 		else:
-			check3 = '4818532868'
+			check3 = SHA.new('4818532868')
 
 		# Check node
-		node = uuid.getnode()
 		try:
 			license['nodes'].index(node)
-			check4 = '5794981726'
+			check4 = SHA.new('5794981726')
 		except:
 			request = urllib.urlencode({'name': license['name'], 'node': node})
 			conn.request("GET", license['path'] + '/unauthorized?' + request)
 			r1 = conn.getresponse()
-			print(node)
 			sys.exit(4)
 
-		assert check1 == '0876677837'
-		assert check2 == '2668052645'
-		assert check3 == '4818532868'
-		assert check4 == '5794981726'
+		try:
+			check1 = check1.hexdigest() == '215e3697336d6b0763bf8f5ce3e8dcc667ad206c'
+			check2 = check2.hexdigest() == 'a9ae5e43bc4d5283d14d2d4d9bc07eba60d51e1a'
+			check3 = check3.hexdigest() == '7bc3988f8d7e5ba6e3932ad6559585b5b88c67e5'
+			check4 = check4.hexdigest() == '5a2619d8258a0ed36098a9da37f5f6e2d1cfb9d7'
+		except:
+			sys.exit(5)
+
+		assert check1 and check2 and check3 and check4
+
+		msg = 'I certify that I am ' + license['name'] + ' and that I agree to the following terms:\n\n'
+		msg += 'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+		title = "Terms of Use"
+		if easygui.ynbox(msg, title):     # show a Continue/Cancel dialog
+			pass  # user chose Continue
+		else:  # user chose Cancel
+			sys.exit(0)
 
 		# Get serial ports
 		serial_ports = []
@@ -135,6 +153,7 @@ class ReflowController:
 				match = re.search("tty[\.U]", f)
 				if match != None:
 					serial_ports.append("/dev/" + f)
+
 
 		def update():
 			global i, update_timer, temp_controller
@@ -193,6 +212,7 @@ class ReflowController:
 
 		# root
 		root = Tk()
+
 		root.wm_title("Reflow Controller")
 
 		# profile widget
