@@ -22,12 +22,12 @@ class TemperatureController:
 	def hyst_high(self, temp):
 		response = self.cmd("hyst_high", temp)
 		if response == "err":
-			print "An error occurred while setting hyst_high"
+			print("An error occurred while setting hyst_high")
 
 	def hyst_low(self, temp):
 		response = self.cmd("hyst_low", temp)
 		if response == "err":
-			print "An error occurred while setting hyst_low"
+			print("An error occurred while setting hyst_low")
 	
 	def start(self):
 		self.cmd("start")

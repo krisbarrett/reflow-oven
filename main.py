@@ -1,7 +1,7 @@
 #TODO: Implement serial port selector
 #TODO: Integrate temperature controller
 
-from Tkinter import *
+from tkinter import *
 from threading import *
 from random import *
 from profile_widget import ProfileWidget
@@ -26,8 +26,8 @@ def update():
 	if(i > 0):
 		expected = profile.desired[i-1]
 		error = 100 * (actual - expected) / expected
-		print '%(i)d,%(actual).2f,%(expected).2f,%(error).2f' % \
-			{"i": i, "actual": actual, "expected": expected, "error": error} 
+		print('%(i)d,%(actual).2f,%(expected).2f,%(error).2f' % \
+			{"i": i, "actual": actual, "expected": expected, "error": error})
 		profile.add_actual(actual)
 	i = i + 1
 	if i < len(profile.desired):
@@ -36,7 +36,7 @@ def update():
 	
 def start_button_clicked():
 	global i, update_timer, temp_controller
-	print "start clicked"
+	print("start clicked")
 	if serial_var.get() == "-":
 		return
 	temp_controller = TemperatureController("/dev/" + serial_var.get())
@@ -63,7 +63,7 @@ def start_button_clicked():
 	update()
 	
 def preview_button_clicked():
-	print "preview clicked"
+	print("preview clicked")
 	desired = Reflow.reflow(50,  
 		preheat_min=float(preheat_min_var.get()), 
 		preheat_max=float(preheat_max_var.get()), 
@@ -96,12 +96,12 @@ frame.grid(row=0, column=1)
 serial_label = Label(frame, text="Serial Port: ")
 serial_var = StringVar(root)
 serial_var.set(serial_ports[0])
-serial_option = apply(OptionMenu, (frame, serial_var) + tuple(serial_ports))
+serial_option = OptionMenu(frame, serial_var, *serial_ports)
 serial_label.grid(row=1, column=0)
 serial_option.grid(row=1, column=1)
 
 # ramp up
-degrees_c = unichr(176) + "C"
+degrees_c = "C"
 ramp_up_label = Label(frame, text="Ramp Up (" + degrees_c + "/s): ")
 ramp_up_var = StringVar(root)
 ramp_up_entry = Entry(frame, textvariable=ramp_up_var)
