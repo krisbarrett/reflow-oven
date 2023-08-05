@@ -1,14 +1,15 @@
 import serial
 
+
 class TemperatureController:
 	def __init__(self, serial_port):
 		self.serial = serial.Serial(serial_port, timeout=1)
 
 	def cmd(self, cmd, arg=""):
 		stuff = cmd + " " + str(arg) + chr(10)
-		self.serial.write(stuff)
+		self.serial.write(bytes(stuff, 'ascii'))
 		result = self.serial.readline()
-		if(result == ""):
+		if result == "":
 			return 0
 		else:
 			return result
@@ -22,12 +23,12 @@ class TemperatureController:
 	def hyst_high(self, temp):
 		response = self.cmd("hyst_high", temp)
 		if response == "err":
-			print "An error occurred while setting hyst_high"
+			print("An error occurred while setting hyst_high")
 
 	def hyst_low(self, temp):
 		response = self.cmd("hyst_low", temp)
 		if response == "err":
-			print "An error occurred while setting hyst_low"
-	
+			print("An error occurred while setting hyst_low")
+
 	def start(self):
 		self.cmd("start")

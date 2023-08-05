@@ -2,7 +2,6 @@
 
 // pins
 int zeroCross = 2;
-int cooler = 3;
 int led = 4;
 int relayLed = 5;
 int thermoGND = 8;
@@ -19,6 +18,7 @@ double lastTemp = 0;
 int lastTempMs = 0;
 int heaterState = LOW;
 int ledState = LOW;
+bool testMode = false;
 
 // command buffer
 String cmdBuffer = "";
@@ -57,7 +57,11 @@ void processCmd() {
   }
   
   if(cmd.equals("temp")) {
-    Serial.println(thermocouple.readCelsius());
+    if(testMode) {
+      Serial.println(temp);
+    } else {
+      Serial.println(thermocouple.readCelsius());
+    }
   } else if(cmd.equals("start")) {
     running = true;
     Serial.println("ack");
@@ -68,7 +72,11 @@ void processCmd() {
   }
   else if(cmd.equals("set_temp")) {
     temp = stof(arg);
-    Serial.println(thermocouple.readCelsius());
+    if(testMode) {
+      Serial.println(temp);
+    } else {
+      Serial.println(thermocouple.readCelsius());
+    }
   }
   else if(cmd.equals("set_hyst_high")) {
     hystHigh = stof(arg);
@@ -111,7 +119,6 @@ float stof(String s) {
 
 void nextState() {
   digitalWrite(heater, heaterState);
-  digitalWrite(cooler, coolerState);
   digitalWrite(relayLed, heaterState);
   double currentTemp = cmdTemp();
   if(heaterState == HIGH) {
@@ -120,7 +127,6 @@ void nextState() {
   else if(heaterState == LOW){
     heaterState = (currentTemp <= temp) ? HIGH : LOW;
   }
-  coolerState = (heaterState == LOW) ? HIGH : LOW;
 }
 
 void setup() {
