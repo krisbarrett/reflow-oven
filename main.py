@@ -20,10 +20,11 @@ def update():
     actual = temp_controller.set_temp(profile.desired[i])
     if i > 0:
         expected = profile.desired[i - 1]
-        error = 100 * (actual - expected) / expected
-        print('%(i)d,%(actual).2f,%(expected).2f,%(error).2f' %
-              {"i": i, "actual": actual, "expected": expected, "error": error})
-        profile.add_actual(actual)
+        if expected != 0:
+            error = 100 * (actual - expected) / expected
+            print('%(i)d,%(actual).2f,%(expected).2f,%(error).2f' %
+                  {"i": i, "actual": actual, "expected": expected, "error": error})
+            profile.add_actual(actual)
     i = i + 1
     if i < len(profile.desired):
         update_timer = Timer(1, update)

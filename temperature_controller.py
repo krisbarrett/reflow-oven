@@ -7,7 +7,7 @@ class TemperatureController:
 
 	def cmd(self, cmd, arg=""):
 		stuff = cmd + " " + str(arg) + chr(10)
-		self.serial.write(stuff)
+		self.serial.write(bytes(stuff, 'ascii'))
 		result = self.serial.readline()
 		if result == "":
 			return 0
